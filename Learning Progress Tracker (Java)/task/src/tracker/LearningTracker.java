@@ -1,12 +1,10 @@
 package tracker;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class LearningTracker {
-    private final List<Student> studentsList = new ArrayList<>();
+    private static int id;
+    private final Map<Integer, Student> studentsList = new HashMap<>();
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
@@ -34,24 +32,33 @@ public class LearningTracker {
     }
 
     private void addStudents() {
-        List<Student> studentTemp = new LinkedList<>();
+        int counter = 0;
         System.out.println("Enter student credentials or 'back' to return");
 
         while (true) {
             String input = scanner.nextLine();
 
             if (input.equals("back")) {
-                System.out.printf("Total %d students have been added.", studentTemp.size());
-                this.studentsList.addAll(studentTemp);
+                System.out.printf("Total %d students have been added.", counter);
                 return;
             }
 
-            if (Validator.validate(input)) {
-                String[] student = input.split("\\s+");
-                studentTemp.add(new Student(student[0], student[1], student[2]));
-                System.out.println("Student has been added.");
-            }
+            Optional<Student> studentOptional = Validator.validate(input);
 
+            if (studentOptional.isPresent()) {
+                Student student = studentOptional.get();
+
+                if (studentsList.values().stream()
+                        .anyMatch(s -> s.getEmail().equals(student.getEmail()))
+                ) {
+                    System.out.println("This email is already taken.");
+                } else {
+                    studentsList.put(id, student);
+                    id++;
+                    counter++;
+                    System.out.println("Student has been added.");
+                }
+            }
         }
     }
 }
