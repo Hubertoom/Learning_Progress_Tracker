@@ -3,8 +3,7 @@ package tracker;
 import java.util.*;
 
 public class LearningTracker {
-    private static int id;
-    private final Map<Integer, Student> studentsList = new HashMap<>();
+    private final Map<Integer, Student> studentsList = new LinkedHashMap<>();
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
@@ -19,6 +18,7 @@ public class LearningTracker {
 
             switch (input) {
                 case "add students" -> addStudents();
+                case "list" -> displayStudentsList();
                 case "exit" -> {
                     System.out.println("Bye");
                     return;
@@ -29,6 +29,13 @@ public class LearningTracker {
 
         }
 
+    }
+
+    private void displayStudentsList() {
+        System.out.println("Students:");
+        studentsList.values().stream()
+                .map(Student::getStudentId)
+                .forEach(System.out::println);
     }
 
     private void addStudents() {
@@ -53,8 +60,7 @@ public class LearningTracker {
                 ) {
                     System.out.println("This email is already taken.");
                 } else {
-                    studentsList.put(id, student);
-                    id++;
+                    studentsList.put(student.getStudentId(), student);
                     counter++;
                     System.out.println("Student has been added.");
                 }
