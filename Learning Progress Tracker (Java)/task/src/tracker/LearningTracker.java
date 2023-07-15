@@ -3,6 +3,7 @@ package tracker;
 import tracker.courses.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LearningTracker {
     private final Map<String, Student> studentsList;
@@ -43,6 +44,7 @@ public class LearningTracker {
                 case "add points" -> addPoints();
                 case "find" -> findStudent();
                 case "statistics" -> getStatistics();
+                case "notify" -> sendNotification();
                 case "exit" -> {
                     System.out.println("Bye");
                     return;
@@ -54,6 +56,25 @@ public class LearningTracker {
         }
 
     }
+
+    private void sendNotification() {
+        coursesList.forEach((courseName, course) -> course.getStudentWithoutNotification()
+                .forEach(index -> printNotification(courseName, studentsList.get(index))));
+
+        int counter = coursesList.values().stream()
+                .map(Course::getRecentlyNotified)
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+
+        System.out.printf("Total %d students have been notified.\n", counter);
+    }
+
+    private void printNotification(String courseName, Student student) {
+        System.out.printf("To: %s\n", student.getEmail());
+        System.out.println("Re: Your Learning Progress");
+        System.out.printf("Hello, %s %s! You have accomplished our %s course!\n", student.getName(), student.getSurname(), courseName);
+    }
+
 
     private void getStatistics() {
         System.out.println("Type the name of a course to see details or 'back' to quit:");

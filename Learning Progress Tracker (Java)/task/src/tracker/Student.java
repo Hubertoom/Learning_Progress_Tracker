@@ -7,6 +7,11 @@ public class Student {
     private final String surname;
     private final String email;
 
+    private final boolean isNotificationSentForJava = false;
+    private final boolean isNotificationSentForDsa = false;
+    private final boolean isNotificationSentForDatabases = false;
+    private final boolean isNotificationSentForSpring = false;
+
     // courses:
     private int java = 0;
     private int dsa = 0;
