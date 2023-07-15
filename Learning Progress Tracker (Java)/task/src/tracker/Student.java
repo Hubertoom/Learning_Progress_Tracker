@@ -20,6 +20,16 @@ public class Student {
         this.email = email;
     }
 
+    public int getPoints(String courseName) {
+        return switch (courseName.toLowerCase()) {
+            case "java" -> java;
+            case "dsa" -> dsa;
+            case "databases" -> database;
+            case "spring" -> spring;
+            default -> -1;
+        };
+    }
+
     public String getStudentId() {
         return studentId;
     }
@@ -56,5 +66,21 @@ public class Student {
     public String toString() {
         return String.format("%s points: Java=%d; DSA=%d; Databases=%d; Spring=%d"
         ,studentId, java, dsa, database, spring);
+    }
+
+    public int getJava() {
+        return java;
+    }
+
+    public int getDsa() {
+        return dsa;
+    }
+
+    public int getDatabase() {
+        return database;
+    }
+
+    public int getSpring() {
+        return spring;
     }
 }

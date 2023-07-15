@@ -1,10 +1,31 @@
 package tracker;
 
+import tracker.courses.*;
+
 import java.util.*;
 
 public class LearningTracker {
-    private final Map<String, Student> studentsList = new LinkedHashMap<>();
+    private final Map<String, Student> studentsList;
     private final Scanner scanner = new Scanner(System.in);
+    private final Statistics statistics;
+    private final Course javaCourse = new Course("Java", 600);
+    private final Course springCourse = new Course("Spring", 550);
+    private final Course dsaCourse = new Course("DSA", 400);
+    private final Course databaseCourse = new Course("Databases", 480);
+    private final Map<String, Course> coursesList;
+
+
+    public LearningTracker() {
+        this.studentsList = new LinkedHashMap<>();
+        this.coursesList = new HashMap<>();
+        coursesList.put(javaCourse.getCourseName(), javaCourse);
+        coursesList.put(springCourse.getCourseName(), springCourse);
+        coursesList.put(dsaCourse.getCourseName(), dsaCourse);
+        coursesList.put(databaseCourse.getCourseName(), databaseCourse);
+
+        statistics = new Statistics(studentsList, coursesList);
+    }
+
 
     public void run() {
         System.out.println("Learning Progress Tracker");
@@ -21,6 +42,7 @@ public class LearningTracker {
                 case "list" -> displayStudentsList();
                 case "add points" -> addPoints();
                 case "find" -> findStudent();
+                case "statistics" -> getStatistics();
                 case "exit" -> {
                     System.out.println("Bye");
                     return;
@@ -31,6 +53,30 @@ public class LearningTracker {
 
         }
 
+    }
+
+    private void getStatistics() {
+        System.out.println("Type the name of a course to see details or 'back' to quit:");
+        System.out.println(
+                "Most popular: " + statistics.getMostPopular() + "\n" +
+                        "Least popular: " + statistics.getLeastPopular() + "\n" +
+                        "Highest activity: " + statistics.getHighestActivity() + "\n" +
+                        "Lowest activity: " + statistics.getLowestActivity() + "\n" +
+                        "Easiest course: " + statistics.getEasiestCourse() + "\n" +
+                        "Hardest course: " + statistics.getHardestCourse()
+        );
+
+        while (true) {
+            String userChoice = scanner.nextLine();
+            if (userChoice.equals("back")) {
+                return;
+            }
+            if (!coursesList.containsKey(userChoice)) {
+                System.out.println("Unknown course.");
+                continue;
+            }
+            statistics.getStatisticsForCourse(userChoice);
+        }
     }
 
     private void findStudent() {
@@ -91,9 +137,17 @@ public class LearningTracker {
 
     private void updatePoints(Student student, int java, int dsa, int database, int spring) {
         student.addJava(java);
+        javaCourse.updatePoints(student, java);
+
         student.addDsa(dsa);
+        dsaCourse.updatePoints(student, dsa);
+
         student.addDatabase(database);
+        databaseCourse.updatePoints(student, database);
+
         student.addSpring(spring);
+        springCourse.updatePoints(student, spring);
+
         System.out.println("Points updated");
     }
 
@@ -116,7 +170,7 @@ public class LearningTracker {
             String input = scanner.nextLine();
 
             if (input.equals("back")) {
-                System.out.printf("Total %d students have been added.", counter);
+                System.out.printf("Total %d students have been added.\n", counter);
                 return;
             }
 
