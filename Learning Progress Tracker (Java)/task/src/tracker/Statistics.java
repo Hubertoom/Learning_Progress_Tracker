@@ -3,7 +3,6 @@ package tracker;
 import tracker.courses.*;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Statistics {
@@ -23,7 +22,6 @@ public class Statistics {
         return coursesList.values().stream()
                 .sorted(Comparator.comparingInt(Course::getNumberOfStudents)
                         .reversed())
-               // .limit(3)
                 .map(Course::getCourseName)
                 .collect(Collectors.joining(", "));
 
@@ -117,62 +115,16 @@ public class Statistics {
         Course course = coursesList.get(courseName);
         course.getStudentsList()
                 .values().stream()
-                .sorted(Comparator.comparingInt(student -> student.getPoints(courseName)))
-                .sorted(getPointsComparator(courseName).reversed())
+                .sorted(Comparator.comparingInt(s -> ((Student)s).getPoints(courseName)).reversed())
                 .forEach(student -> System.out.printf("%s %d        %.1f%%\n"
                         , student.getStudentId()
                         , student.getPoints(courseName)
                         , (double) student.getPoints(courseName) / course.getPointsToAccomplish() * 100.0
                 ));
-
     }
-
-    private Comparator<? super Student> getPointsComparator(String courseName) {
-        return switch (courseName.toLowerCase()) {
-            case "java" -> new JavaPointsComparator();
-            case "dsa" -> new DsaPointsComparator();
-            case "databases" -> new DatabasesPointsComparator();
-            case "spring" -> new SpringPointsComparator();
-            default -> throw new IllegalStateException("Unexpected value: " + courseName.toLowerCase());
-        };
-    }
-
 
     private boolean checkIsAtLeastOneCourseIsActive() {
         return coursesList.values().stream()
                 .anyMatch(course -> course.getNumberOfStudents() != 0);
     }
-
-    static class JavaPointsComparator implements Comparator<Student> {
-
-        @Override
-        public int compare(Student s1, Student s2) {
-            return Integer.compare(s1.getJava(), s2.getJava());
-        }
-    }
-
-    static class DsaPointsComparator implements Comparator<Student> {
-
-        @Override
-        public int compare(Student s1, Student s2) {
-            return Integer.compare(s1.getDsa(), s2.getDsa());
-        }
-    }
-
-    static class DatabasesPointsComparator implements Comparator<Student> {
-
-        @Override
-        public int compare(Student s1, Student s2) {
-            return Integer.compare(s1.getDatabase(), s2.getDatabase());
-        }
-    }
-
-    static class SpringPointsComparator implements Comparator<Student> {
-
-        @Override
-        public int compare(Student s1, Student s2) {
-            return Integer.compare(s1.getSpring(), s2.getSpring());
-        }
-    }
-
 }
