@@ -115,7 +115,7 @@ public class Statistics {
         Course course = coursesList.get(courseName);
         course.getStudentsList()
                 .values().stream()
-                .sorted(Comparator.comparingInt(s -> ((Student)s).getPoints(courseName)).reversed())
+                .sorted(Comparator.<Student>comparingInt(student -> student.getPoints(courseName)).reversed())
                 .forEach(student -> System.out.printf("%s %d        %.1f%%\n"
                         , student.getStudentId()
                         , student.getPoints(courseName)
